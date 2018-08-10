@@ -75,10 +75,10 @@ async def Ialarm(cont,inp):#ALARM COMMAND
         alarmTime = parser.parse(inp)
     except:
         await cont.send(":negative_squared_cross_mark:Please use the Format \"[M-D-Y] H:M:S\".\n\
-                       Examples:\n\
-                       12-24 10:00 --> 24th Dec of the current year, 10:00:00. \n\
-                       12:30 --> 12:30, today.\n\
-                       __if no date is supplied, the current day will be used.__"); return
+__Examples:__\n\
+12-24 10:00 --> 24th Dec of the current year, 10:00:00. \n\
+12:30 --> 12:30, today.\n\
+__if no date is supplied, the current day will be used.__"); return
 
     temp = Alarm(cont.author,alarmTime)
     alarmList.append(temp)
