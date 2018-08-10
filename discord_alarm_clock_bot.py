@@ -38,7 +38,8 @@ async def cmd_name(inp):
 async def time(ctx):
     """displays the current time."""
     time_str = strftime("%H:%M:%S")
-    await ctx.send(time_str)
+    await ctx.send("```"+time_str+"```")
+    del time_str
 
 
 # END COMMANDS----------------------
@@ -92,13 +93,18 @@ __Examples:__\
 12:30 --> 12:30, today.\
 __if no date is supplied, the current day will be used.__");
         return
-
+    if alarmTime < datetime.now():
+        await cont.send('The date / time you supplied is in the past. No alarm has been set.')
+        return
     temp = Alarm(cont.author, alarmTime)
     alarmList.append(temp)
     del temp
     await cont.send(
         ":white_check_mark:" + cont.author.mention + "'s alarm is now set to " + str(alarmTime.date()) + ", " + str(
             alarmTime.time()) + "!")
+
+async def Iremove_alarm():
+    
 
 
 # END FUNCTIONS---------------------
