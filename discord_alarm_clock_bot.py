@@ -6,11 +6,11 @@ from dateutil import parser
 from datetime import datetime
 
 prefix = '>'
-alarmList = []
+alarmList = [] # TODO make seperate alarmLists for servers/Users
 
 description = "A simple alarm clock bot.\ntype "+prefix+"help for help.\nMade by DaMightyZombie"
 bot = commands.Bot(command_prefix=prefix, description=description)
-
+client = discord.Client()
 
 @bot.event
 async def on_ready():
@@ -121,9 +121,12 @@ class Alarm:
 async def check_alarms():
     await bot.wait_until_ready()
     while not bot.is_closed():
-        for itm in alarmList:
-            if itm.time < datetime.now():
-                print("alarm of "+str(itm.name)+" just rang!")
+        for i in range(len(alarmList)):
+            if alarmList[i].time < datetime.now():
+                await alarmList[i].name.create_dm()
+                await alarmList[i].name.dm_channel.send(content=":alarm_clock:Your alarm just rang!")
+                print("alarm of "+str(alarmList[i].name)+" just rang!")
+                alarmList.pop(i)
         await asyncio.sleep(5)  # task runs every 60 seconds
 
 
