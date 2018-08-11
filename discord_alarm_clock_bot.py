@@ -59,9 +59,15 @@ async def alarm(ctx, time):
 
 
 @bot.command(pass_context=True)
-async def a(ctx, time):
+async def a(ctx, in_time):
     """sets an alarm for the given time / date. Short for alarm."""
-    await Ialarm(ctx, time)
+    await Ialarm(ctx, in_time)
+
+
+@bot.command(pass_context=True)
+async def d(ctx, ind):
+    """removes the alarm at the given index from the alarmList."""
+    await Iremove_alarm(ctx, ind)
 
 
 # END ALIASES-----------------------
@@ -100,11 +106,18 @@ __if no date is supplied, the current day will be used.__");
     alarmList.append(temp)
     del temp
     await cont.send(
-        ":white_check_mark:" + cont.author.mention + "'s alarm is now set to " + str(alarmTime.date()) + ", " + str(
-            alarmTime.time()) + "!")
+        ":white_check_mark:" + cont.author.mention + "'s alarm is now set to **" + str(alarmTime.date()) + ", " + str(
+            alarmTime.time()) + "**!")
 
-async def Iremove_alarm():
-    
+async def Iremove_alarm(cont, index):
+    index = int(index) - 1
+    if cont.author == alarmList[index].name: # you shouldn't be able to delete other people's alarms
+        alarmTime = alarmList[index].time
+        await cont.send(":white_check_mark:Your alarm for **" + str(alarmTime.date()) + ", "
+                        + str(alarmTime.time()) + "** has been removed.")
+        del alarmList[index]
+    else:
+        await cont.send("the alarm at the Index you entered does not belong to you.")
 
 
 # END FUNCTIONS---------------------
