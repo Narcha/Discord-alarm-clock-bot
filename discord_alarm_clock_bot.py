@@ -97,8 +97,8 @@ async def Ialarmlist(cont):  # ALARMLIST COMMAND
     embed = discord.Embed(title=":alarm_clock:Alarm List", color=0x22a7cc)
     embed.set_thumbnail(url="http://cdn.iphonehacks.com/wp-content/uploads/2017/01/alarm-icon-29.png")
     print('Current alarm list:')
-    if cont.channel not in alarmList2.keys():
-        await cont.send('no alarms have yet been set in this channel. add one with ' + prefix + 'alarm [your time].')
+    if cont.channel not in alarmList2.keys() or alarmList2[cont.channel] == []:
+        await cont.send('no alarms have yet been set in this channel. add one with ' + prefix + 'alarm [time].')
         return
     for i in range(len(alarmList2[cont.channel])):
         embed.add_field(name='#' + str(i + 1) + ':' + str(alarmList2[cont.channel][i].name).split('#', 1)[0],
@@ -166,12 +166,13 @@ class Alarm:
 async def check_alarms():
     await bot.wait_until_ready()
     while not bot.is_closed():
-        for i in range(len(alarmList)):
-            if alarmList[i].time < datetime.now():
-                await alarmList[i].name.create_dm()
-                await alarmList[i].name.dm_channel.send(content=":alarm_clock:Your alarm just rang!")
-                print("alarm of "+str(alarmList[i].name)+" just rang!")
-                alarmList.pop(i)
+        for alarmList in alarmList2.values():
+            for i in range(len(alarmList)):
+                if alarmList[i].time < datetime.now():
+                    await alarmList[i].name.create_dm()
+                    await alarmList[i].name.dm_channel.send(content=":alarm_clock:Your alarm for **"+alarmList[i].time+"** just rang!")
+                    print("alarm of "+str(alarmList[i].name)+" just rang!")
+                    alarmList.pop(i)
         await asyncio.sleep(5)  # task runs every 60 seconds
 
 
