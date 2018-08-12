@@ -13,6 +13,7 @@ description = "A simple alarm clock bot.\ntype "+prefix+"help for help.\nMade by
 bot = commands.Bot(command_prefix=prefix, description=description)
 client = discord.Client()
 
+
 @bot.event
 async def on_ready():
     print('Logged in as')
@@ -50,101 +51,102 @@ async def time(ctx):
 @bot.command(pass_context=True)
 async def la(ctx):
     """lists all currently active alarms. Short for ListAlarms."""
-    await Ialarmlist(ctx)
+    await internal_alarmlist(ctx)
 
 
 @bot.command(pass_context=True)
 async def alarm(ctx, time):
     """sets an alarm for the given time / date."""
-    await Ialarm(ctx, time)
+    await internal_alarm(ctx, time)
 
 
 @bot.command(pass_context=True)
 async def a(ctx, in_time):
     """sets an alarm for the given time / date. Short for alarm."""
-    await Ialarm(ctx, in_time)
+    await internal_alarm(ctx, in_time)
 
 
 @bot.command(pass_context=True)
 async def d(ctx, ind):
     """removes the alarm at the given index from the alarmList. Alias of delete."""
-    await Iremove_alarm(ctx, ind)
+    await internal_remove_alarm(ctx, ind)
 
 
 @bot.command(pass_context=True)
 async def rm(ctx, ind):
     """removes the alarm at the given index from the alarmList. Alias of delete."""
-    await Iremove_alarm(ctx, ind)
+    await internal_remove_alarm(ctx, ind)
 
 
 @bot.command(pass_context=True)
 async def delete(ctx, ind):
     """removes the alarm at the given index from the alarmList."""
-    await Iremove_alarm(ctx, ind)
+    await internal_remove_alarm(ctx, ind)
 
 
 @bot.command(pass_context=True)
 async def remove(ctx, ind):
     """removes the alarm at the given index from the alarmList. Alias of delete."""
-    await Iremove_alarm(ctx, ind)
+    await internal_remove_alarm(ctx, ind)
 
 
 # END ALIASES-----------------------
 
 # BEGIN FUNCTIONS-------------------
 
-async def Ialarmlist(cont):  # ALARMLIST COMMAND
+async def internal_alarmlist(contx):  # ALARMLIST COMMAND
     """lists all currently active alarms."""
     embed = discord.Embed(title=":alarm_clock:Alarm List", color=0x22a7cc)
     embed.set_thumbnail(url="http://cdn.iphonehacks.com/wp-content/uploads/2017/01/alarm-icon-29.png")
     print('Current alarm list:')
-    if cont.channel not in alarmList2.keys() or alarmList2[cont.channel] == []:
-        await cont.send('no alarms have yet been set in this channel. add one with ' + prefix + 'alarm [time].')
+    if contx.channel not in alarmList2.keys() or alarmList2[contx.channel] == []:
+        await contx.send('no alarms have yet been set in this channel. add one with ' + prefix + 'alarm [time].')
         return
-    for i in range(len(alarmList2[cont.channel])):
-        embed.add_field(name='#' + str(i + 1) + ':' + str(alarmList2[cont.channel][i].name).split('#', 1)[0],
-                        value=str(alarmList2[cont.channel][i].time), inline=True)
-        print('#' + str(i + 1) + ':' + str(alarmList2[cont.channel][i].name) + " -> " + str(alarmList2[cont.channel][i].time))
+    for i in range(len(alarmList2[contx.channel])):
+        embed.add_field(name='#' + str(i + 1) + ':' + str(alarmList2[contx.channel][i].name).split('#', 1)[0],
+                        value=str(alarmList2[contx.channel][i].time), inline=True)
+        print('#' + str(i + 1) + ':' + str(alarmList2[contx.channel][i].name) + " -> " + str(alarmList2[contx.channel][i].time))
     print('-'*50)
-    await cont.send(embed=embed)
+    await contx.send(embed=embed)
 
 
-async def Ialarm(cont, inp):  # ALARM COMMAND
+async def internal_alarm(contx, inp):  # ALARM COMMAND
     """sets an alarm for the given time / date."""
     try:
-        alarmTime = parser.parse(inp)
+        alarm_time = parser.parse(inp)
     except:
-        await cont.send(":negative_squared_cross_mark:Please use the Format \"[M-D-Y] H:M:S\".\
+        await contx.send(":negative_squared_cross_mark:Please use the Format \"[M-D-Y] H:M:S\".\
 __Examples:__\
 12-24 10:00 --> 24th Dec of the current year, 10:00:00.\
 12:30 --> 12:30, today.\
 __if no date is supplied, the current day will be used.__")
         return
-    if alarmTime < datetime.now():
-        await cont.send('The date / time you supplied is in the past. No alarm has been set.')
+    if alarm_time < datetime.now():
+        await contx.send('The date / time you supplied is in the past. No alarm has been set.')
         return
 
-    temp = Alarm(cont.author, alarmTime)
-    if cont.channel not in alarmList2.keys():
-        alarmList2.update({cont.channel: []})
+    temp = Alarm(contx.author, alarm_time)
+    if contx.channel not in alarmList2.keys():
+        alarmList2.update({contx.channel: []})
 
-    alarmList2[cont.channel].append(temp)  # add the alarm to the list at the index (channel)
+    alarmList2[contx.channel].append(temp)  # add the alarm to the list at the index (channel)
     del temp
 
-    await cont.send(
-        ":white_check_mark:" + cont.author.mention + "'s alarm is now set to **" + str(alarmTime.date()) + ", " + str(
-            alarmTime.time()) + "**!")
+    await contx.send(
+        ":white_check_mark:" + contx.author.mention + "'s alarm is now set to **" + str(alarm_time.date()) + ", " + str(
+            alarm_time.time()) + "**!")
 
-async def Iremove_alarm(cont, index):
+
+async def internal_remove_alarm(contx, index):
     index = int(index) - 1
-    if cont.author == alarmList2[cont.channel][index].name:  # you shouldn't be able to delete other people's alarms
-        alarm_time = alarmList2[cont.channel][index].time
-        await cont.send(":white_check_mark:Your alarm for **" + str(alarm_time.date()) + ", "
-                        + str(alarm_time.time()) + "** has been removed.")
-        del alarmList2[cont.channel][index]
+    if contx.author == alarmList2[contx.channel][index].name:  # you shouldn't be able to delete other people's alarms
+        alarm_time = alarmList2[contx.channel][index].time
+        await contx.send(":white_check_mark:Your alarm for **" + str(alarm_time.date()) + ", "
+                         + str(alarm_time.time()) + "** has been removed.")
+        del alarmList2[contx.channel][index]
         del alarm_time
     else:
-        await cont.send("the alarm at the Index you entered does not belong to you.")
+        await contx.send("the alarm at the Index you entered does not belong to you.")
 
 
 # END FUNCTIONS---------------------
@@ -174,7 +176,7 @@ async def check_alarms():
                     await alarmList[i].name.dm_channel.send(content=":alarm_clock:Your alarm for **"+alarmList[i].time+"** just rang!")
                     print("alarm of "+str(alarmList[i].name)+" just rang!")
                     alarmList.pop(i)
-        await asyncio.sleep(5)  # task runs every 60 seconds
+        await asyncio.sleep(5)  # task runs every 5 seconds
 
 
 # END BACKGROUND TASKS--------------
