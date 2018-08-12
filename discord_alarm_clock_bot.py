@@ -4,6 +4,7 @@ from discord.ext import commands
 from time import strftime
 from dateutil import parser
 from datetime import datetime
+import os
 
 prefix = '>'
 alarmList2 = {}  # Dictionary of lists of alarms
@@ -179,4 +180,4 @@ async def check_alarms():
 # END BACKGROUND TASKS--------------
 
 bot.loop.create_task(check_alarms())
-bot.run('NDc2ODIwNzc0ODcxNzYwODk3.DkzaCw.l8mhRpKl6zhmYGR3VGz4w7xBukg')
+bot.run(os.getenv('token'))
