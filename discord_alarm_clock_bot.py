@@ -6,7 +6,6 @@ from dateutil import parser
 from datetime import datetime
 
 prefix = '>'
-alarmList = []  # TODO make seperate alarmLists for servers/Users
 alarmList2 = {}  # Dictionary of lists of alarms
 
 description = "A simple alarm clock bot.\ntype "+prefix+"help for help.\nMade by DaMightyZombie"
