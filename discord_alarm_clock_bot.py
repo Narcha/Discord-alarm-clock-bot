@@ -173,7 +173,7 @@ async def check_alarms():
             for i in range(len(alarmList)):
                 if alarmList[i].time < datetime.now():
                     await alarmList[i].name.create_dm()
-                    await alarmList[i].name.dm_channel.send(content=":alarm_clock:Your alarm for **"+alarmList[i].time+"** just rang!")
+                    await alarmList[i].name.dm_channel.send(content=":alarm_clock:Your alarm for **"+str(alarmList[i].time)+"** just rang!")
                     print("alarm of "+str(alarmList[i].name)+" just rang!")
                     alarmList.pop(i)
         await asyncio.sleep(5)  # task runs every 5 seconds
